@@ -1,0 +1,10 @@
+{% extends 'base.html' %}{% load mfp %}
+{% block page_title %}Products{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Product catalog</h1><p>All spare-parts records are preserved, including identical product names. Stock shown for {{ branch.name }}.</p></div><a class="btn btn-primary" href="{% url 'product_create' %}">Add product</a></div>
+<form method="get" class="novman-filters"><label>Search<input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Name, barcode or category"></label><button class="btn btn-primary">Search</button></form>
+<section class="card"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Barcode</th><th>Category</th><th>Supplier</th><th>Buying price</th><th>Selling price</th><th>Branch qty</th><th></th></tr></thead><tbody>
+{% for row in rows %}<tr><td><strong>{{ row.product.name }}</strong><small class="cell-sub">ID {{ row.product.id }}{% if row.product.legacy_novman_id %} · Old #{{ row.product.legacy_novman_id }}{% endif %}</small></td><td>{{ row.product.barcode|default:'—' }}</td><td>{{ row.product.category.name }}</td><td>{{ row.product.supplier.name|default:'—' }}</td><td>{{ row.product.last_buying_price|money }}</td><td>{% if row.unit %}{{ row.unit.selling_price|money }}{% else %}—{% endif %}</td><td>{{ row.quantity|qty }}</td><td><a class="btn btn-secondary btn-sm" href="{% url 'product_edit' row.product.id %}">Edit</a></td></tr>
+{% empty %}<tr><td colspan="8" class="empty">No products.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

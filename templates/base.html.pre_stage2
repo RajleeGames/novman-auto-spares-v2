@@ -1,0 +1,233 @@
+{% load static %}{% load mfp %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}{{ shop.name }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'core/app.css' %}?v=20">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="app-body {% block body_class %}{% endblock %}">
+<div class="mfp-page-loader" id="mfpPageLoader" aria-hidden="true">
+  <div class="mfp-loader-content" role="status" aria-live="polite">
+    <div class="mfp-loader-symbol" aria-hidden="true">
+      <span class="mfp-loader-ring"></span>
+      {% if shop.logo %}
+        <span class="mfp-loader-logo"><img src="{{ shop.logo.url }}" alt=""></span>
+      {% else %}
+        <span class="mfp-loader-fallback">JC</span>
+      {% endif %}
+    </div>
+    <span class="mfp-loader-text" id="mfpPageLoaderText">Loading…</span>
+  </div>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="Main sidebar">
+    <div class="sidebar-inner">
+      <a class="brand" href="{% url 'dashboard' %}" title="{{ shop.name }}">
+        {% if shop.logo %}
+          <span class="brand-logo"><img src="{{ shop.logo.url }}" alt="{{ shop.name }} logo"></span>
+        {% else %}
+          <span class="brand-mark">JC</span>
+        {% endif %}
+        <span class="brand-copy">
+          <span class="brand-name">{{ shop.name }}</span>
+          <span class="brand-sub">Sales &amp; Stock</span>
+        </span>
+      </a>
+
+      <nav class="nav-list" aria-label="Main navigation">
+        <a href="{% url 'dashboard' %}" title="Dashboard" class="nav-item nav-direct {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <span class="ico" data-icon="dashboard"></span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <div class="nav-group {% if request.resolver_match.url_name == 'pos' or 'sale' in request.resolver_match.url_name or 'debt' in request.resolver_match.url_name or 'customer' in request.resolver_match.url_name or 'end_day' in request.resolver_match.url_name or 'cash_closing' in request.resolver_match.url_name %}open active-group{% endif %}" data-nav-group="sales">
+          <button class="nav-group-toggle" type="button" aria-expanded="{% if request.resolver_match.url_name == 'pos' or 'sale' in request.resolver_match.url_name or 'debt' in request.resolver_match.url_name or 'customer' in request.resolver_match.url_name or 'end_day' in request.resolver_match.url_name or 'cash_closing' in request.resolver_match.url_name %}true{% else %}false{% endif %}" title="Sales">
+            <span class="ico" data-icon="pos"></span>
+            <span class="nav-label">Sales</span>
+            <span class="nav-group-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="nav-submenu">
+            <div class="nav-submenu-inner">
+              <a href="{% url 'pos' %}" class="nav-subitem {% if request.resolver_match.url_name == 'pos' %}active{% endif %}">
+                <span class="nav-child-dot"></span><span>Point of Sale</span>
+              </a>
+              <a href="{% url 'sales' %}" class="nav-subitem {% if 'sale' in request.resolver_match.url_name and request.resolver_match.url_name != 'pos' %}active{% endif %}">
+                <span class="nav-child-dot"></span><span>Sales History</span>
+              </a>
+              <a href="{% url 'end_day' %}" class="nav-subitem {% if request.resolver_match.url_name == 'end_day' or request.resolver_match.url_name == 'cash_closing_amend' %}active{% endif %}">
+                <span class="nav-child-dot"></span><span>End Day</span>
+              </a>
+              {% if request.user.profile.role == 'admin' or request.user.is_superuser %}
+              <a href="{% url 'debts' %}" class="nav-subitem {% if 'debt' in request.resolver_match.url_name or 'customer' in request.resolver_match.url_name %}active{% endif %}">
+                <span class="nav-child-dot"></span><span>Debts &amp; Customers</span>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-group {% if 'product' in request.resolver_match.url_name or 'stock' in request.resolver_match.url_name or 'purchase' in request.resolver_match.url_name or 'stocktake' in request.resolver_match.url_name %}open active-group{% endif %}" data-nav-group="inventory">
+          <button class="nav-group-toggle" type="button" aria-expanded="{% if 'product' in request.resolver_match.url_name or 'stock' in request.resolver_match.url_name or 'purchase' in request.resolver_match.url_name or 'stocktake' in request.resolver_match.url_name %}true{% else %}false{% endif %}" title="Inventory">
+            <span class="ico" data-icon="products"></span>
+            <span class="nav-label">Inventory</span>
+            <span class="nav-group-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="nav-submenu">
+            <div class="nav-submenu-inner">
+              {% if request.user.profile.role == 'admin' or request.user.is_superuser %}
+              <a href="{% url 'products' %}" class="nav-subitem {% if 'product' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Products</span></a>
+              <a href="{% url 'stock' %}" class="nav-subitem {% if request.resolver_match.url_name == 'stock' or request.resolver_match.url_name == 'opening_stock' or request.resolver_match.url_name == 'stock_adjust' or request.resolver_match.url_name == 'opening_batch_delete' %}active{% endif %}"><span class="nav-child-dot"></span><span>Stock</span></a>
+              <a href="{% url 'purchases' %}" class="nav-subitem {% if 'purchase' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Purchases</span></a>
+              {% endif %}
+              <a href="{% url 'stocktakes' %}" class="nav-subitem {% if 'stocktake' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Stocktake</span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-group {% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_edit' or request.resolver_match.url_name == 'reports' or 'ninaowadai' in request.resolver_match.url_name %}open active-group{% endif %}" data-nav-group="finance">
+          <button class="nav-group-toggle" type="button" aria-expanded="{% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_edit' or request.resolver_match.url_name == 'reports' or 'ninaowadai' in request.resolver_match.url_name %}true{% else %}false{% endif %}" title="Finance">
+            <span class="ico" data-icon="reports"></span>
+            <span class="nav-label">Finance</span>
+            <span class="nav-group-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="nav-submenu">
+            <div class="nav-submenu-inner">
+              <a href="{% url 'expenses' %}" class="nav-subitem {% if 'expense' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Expenses</span></a>
+              {% if request.user.profile.role == 'admin' or request.user.is_superuser %}
+              <a href="{% url 'ninaowadai' %}" class="nav-subitem {% if 'ninaowadai' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Ninaowadai</span></a>
+              <a href="{% url 'reports' %}" class="nav-subitem {% if request.resolver_match.url_name == 'reports' %}active{% endif %}"><span class="nav-child-dot"></span><span>Reports</span></a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% if request.user.profile.role == 'admin' or request.user.is_superuser %}
+        <div class="nav-group {% if request.resolver_match.namespace == 'sms_center' %}open active-group{% endif %}" data-nav-group="sms-center">
+          <button class="nav-group-toggle" type="button" aria-expanded="{% if request.resolver_match.namespace == 'sms_center' %}true{% else %}false{% endif %}" title="SMS Center">
+            <span class="ico" data-icon="reports"></span>
+            <span class="nav-label">SMS Center</span>
+            <span class="nav-group-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="nav-submenu">
+            <div class="nav-submenu-inner">
+              <a href="{% url 'sms_center:dashboard' %}" class="nav-subitem {% if request.resolver_match.namespace == 'sms_center' and request.resolver_match.url_name == 'dashboard' %}active{% endif %}"><span class="nav-child-dot"></span><span>Overview</span></a>
+              <a href="{% url 'sms_center:send' %}" class="nav-subitem {% if request.resolver_match.namespace == 'sms_center' and request.resolver_match.url_name == 'send' %}active{% endif %}"><span class="nav-child-dot"></span><span>Send SMS</span></a>
+              <a href="{% url 'sms_center:contacts' %}" class="nav-subitem {% if request.resolver_match.namespace == 'sms_center' and 'contact' in request.resolver_match.url_name or request.resolver_match.namespace == 'sms_center' and request.resolver_match.url_name == 'import_contacts' %}active{% endif %}"><span class="nav-child-dot"></span><span>Contacts</span></a>
+              <a href="{% url 'sms_center:templates' %}" class="nav-subitem {% if request.resolver_match.namespace == 'sms_center' and 'template' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Templates</span></a>
+              <a href="{% url 'sms_center:senders' %}" class="nav-subitem {% if request.resolver_match.namespace == 'sms_center' and 'sender' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Sender IDs</span></a>
+              <a href="{% url 'sms_center:history' %}" class="nav-subitem {% if request.resolver_match.namespace == 'sms_center' and request.resolver_match.url_name == 'history' or request.resolver_match.namespace == 'sms_center' and request.resolver_match.url_name == 'campaign_detail' %}active{% endif %}"><span class="nav-child-dot"></span><span>History</span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-group {% if 'user' in request.resolver_match.url_name or request.resolver_match.url_name == 'settings' or 'data_tools' in request.resolver_match.url_name or 'export_' in request.resolver_match.url_name or request.resolver_match.url_name == 'backup_download' %}open active-group{% endif %}" data-nav-group="administration">
+          <button class="nav-group-toggle" type="button" aria-expanded="{% if 'user' in request.resolver_match.url_name or request.resolver_match.url_name == 'settings' or 'data_tools' in request.resolver_match.url_name or 'export_' in request.resolver_match.url_name or request.resolver_match.url_name == 'backup_download' %}true{% else %}false{% endif %}" title="Administration">
+            <span class="ico" data-icon="users"></span>
+            <span class="nav-label">Administration</span>
+            <span class="nav-group-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="nav-submenu">
+            <div class="nav-submenu-inner">
+              <a href="{% url 'users' %}" class="nav-subitem {% if 'user' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Users</span></a>
+              <a href="{% url 'data_tools' %}" class="nav-subitem {% if request.resolver_match.url_name == 'data_tools' or 'export_' in request.resolver_match.url_name or request.resolver_match.url_name == 'backup_download' %}active{% endif %}"><span class="nav-child-dot"></span><span>Data &amp; Backup</span></a>
+              <a href="{% url 'settings' %}" class="nav-subitem {% if request.resolver_match.url_name == 'settings' %}active{% endif %}"><span class="nav-child-dot"></span><span>Settings</span></a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </nav>
+
+      <div class="sidebar-user" title="{{ request.user.get_full_name|default:request.user.username }}">
+        <div class="avatar">{{ request.user.username|first|upper }}</div>
+        <div class="sidebar-user-copy">
+          <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+          <span class="user-role">{{ request.user.profile.get_role_display }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main-area">
+    <header class="topbar">
+      <button class="icon-btn shell-menu-btn" id="menuBtn" type="button" aria-label="Toggle sidebar" aria-controls="sidebar" aria-expanded="true">
+        <span data-icon="menu"></span>
+      </button>
+
+      <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+
+      <div class="topbar-right">
+        <span class="online-state"><i></i>Online</span>
+        <span class="date-chip" id="liveDate"></span>
+
+        <div class="user-menu-wrap" id="userMenuWrap">
+          <button class="user-menu-btn" id="userMenuBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="topbar-avatar">{{ request.user.username|first|upper }}</span>
+            <span class="topbar-user-copy">
+              <span class="topbar-user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+              <span class="topbar-user-role">{{ request.user.profile.get_role_display }}</span>
+            </span>
+            <span class="user-chevron" aria-hidden="true"></span>
+          </button>
+
+          <div class="user-menu" id="userMenu" role="menu" aria-hidden="true">
+            <div class="user-menu-head">
+              <span class="user-menu-title">{{ request.user.get_full_name|default:request.user.username }}</span>
+              <span class="user-menu-sub">@{{ request.user.username }}</span>
+            </div>
+            <div class="user-menu-links">
+              <a href="{% url 'dashboard' %}" role="menuitem"><span data-icon="dashboard"></span><span>Dashboard</span></a>
+              <a href="{% url 'end_day' %}" role="menuitem"><span data-icon="reports"></span><span>End Day</span></a>
+              {% if request.user.profile.role == 'admin' or request.user.is_superuser %}
+              <a href="{% url 'debts' %}" role="menuitem"><span data-icon="debts"></span><span>Debts</span></a>
+              <a href="{% url 'ninaowadai' %}" role="menuitem"><span data-icon="debts"></span><span>Ninaowadai</span></a>
+              <a href="{% url 'sms_center:dashboard' %}" role="menuitem"><span data-icon="reports"></span><span>SMS Center</span></a>
+              <a href="{% url 'settings' %}" role="menuitem"><span data-icon="settings"></span><span>Settings</span></a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <a href="{% url 'logout' %}" class="icon-btn topbar-logout" title="Logout" aria-label="Logout">
+          <span data-icon="logout"></span>
+        </a>
+      </div>
+    </header>
+
+    <section class="page-content">
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}<div class="alert {{ message.tags }}">{{ message }}</div>{% endfor %}
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="confirmActionModal" role="dialog" aria-modal="true" aria-labelledby="confirmActionTitle">
+  <div class="modal-card modal-small">
+    <div class="modal-head">
+      <div><h2 id="confirmActionTitle">Confirm action</h2><p id="confirmActionText">Please confirm this action.</p></div>
+      <button class="modal-close" type="button" data-close-modal="confirmActionModal" aria-label="Close">×</button>
+    </div>
+    <form method="post" id="confirmActionForm" class="form-body modal-form">
+      {% csrf_token %}
+      <div class="confirm-note">This action is checked by the system before any historical records are removed.</div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" data-close-modal="confirmActionModal">Cancel</button>
+        <button class="btn btn-danger" type="submit" id="confirmActionSubmit">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% block scripts %}{% endblock %}
+<script src="{% static 'core/app.js' %}?v=19"></script>
+</body>
+</html>

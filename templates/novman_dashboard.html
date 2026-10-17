@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load mfp %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ branch.name }} — Overview</h1><p>Sales, cost, profit and stock for this branch only.</p></div><div class="head-actions"><a class="btn btn-secondary" href="{% url 'stock' %}">Stock control</a><a class="btn btn-primary" href="{% url 'pos' %}">New sale</a></div></div>
+<form method="get" class="novman-filters card novman-panel"><label>From<input type="date" name="start" class="form-control" value="{{ start|date:'Y-m-d' }}"></label><label>To<input type="date" name="end" class="form-control" value="{{ end|date:'Y-m-d' }}"></label><button class="btn btn-primary" type="submit">Apply</button></form>
+<section class="novman-stat-grid">
+ <article class="novman-stat"><label>Sales revenue</label><strong>{{ revenue|money }} TZS</strong><small>{{ sales_count }} completed sales</small></article>
+ <article class="novman-stat"><label>Gross profit</label><strong>{{ gross|money }} TZS</strong><small>Revenue minus product cost</small></article>
+ <article class="novman-stat"><label>Net profit</label><strong>{{ net|money }} TZS</strong><small>After expenses: {{ expenses|money }} TZS</small></article>
+ <article class="novman-stat"><label>Products cost sold</label><strong>{{ cost|money }} TZS</strong><small>FIFO buying cost</small></article>
+ <article class="novman-stat"><label>Stock buying value</label><strong>{{ stock_value|money }} TZS</strong><small>{{ stock_qty|qty }} pieces / units in branch</small></article>
+ <article class="novman-stat"><label>Inventory status</label><strong>{{ active_products }} products</strong><small>{{ low_count }} low; {{ out_count }} out of stock</small></article>
+</section>
+<section class="card novman-panel novman-gap"><div class="card-head"><h2>Top selling products</h2></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Sold qty</th><th>Sales</th></tr></thead><tbody>{% for row in top_items %}<tr><td>{{ row.product__name }}</td><td>{{ row.qty|qty }}</td><td>{{ row.amount|money }} TZS</td></tr>{% empty %}<tr><td colspan="3" class="empty">No sales for this period.</td></tr>{% endfor %}</tbody></table></div></section>
+<section class="card novman-panel novman-gap"><div class="card-head"><h2>Recent completed sales</h2><a class="btn btn-secondary btn-sm" href="{% url 'sales' %}">All sales</a></div><div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Date</th><th>Cashier</th><th>Amount</th><th>Profit</th></tr></thead><tbody>{% for s in recent_sales %}<tr><td><a href="{% url 'sale_detail' s.id %}">{{ s.receipt_no }}</a></td><td>{{ s.sold_at|date:'d M Y H:i' }}</td><td>{{ s.cashier.username }}</td><td>{{ s.grand_total|money }}</td><td>{{ s.profit_total|money }}</td></tr>{% empty %}<tr><td colspan="5" class="empty">No sales recorded yet.</td></tr>{% endfor %}</tbody></table></div></section>
+<section class="card novman-panel"><div class="card-head"><h2>Low stock alert</h2></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Branch qty</th><th>Low threshold</th></tr></thead><tbody>{% for p,qty in low_products %}<tr><td><a href="{% url 'stock_detail' p.id %}">{{ p.name }}</a></td><td>{{ qty|qty }}</td><td>{{ p.low_stock_level|qty }}</td></tr>{% empty %}<tr><td colspan="3">No low-stock products.</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

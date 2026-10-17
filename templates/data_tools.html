@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% load mfp %}
+{% block page_title %}Data & Backup{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Data &amp; backup</h1><p>Export business records and keep a safe copy of the Msumari Jr Store database.</p></div></div>
+
+<section class="card compact data-filter-card">
+  <form class="date-filter data-tools-filter" method="get"><label><span>From</span><input class="form-control" type="date" name="start" value="{{ start }}"></label><span class="date-arrow">→</span><label><span>To</span><input class="form-control" type="date" name="end" value="{{ end }}"></label><button class="btn btn-secondary" type="submit">Apply range</button></form>
+</section>
+
+<div class="data-tools-grid section-gap">
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="sales"></div><div><h2>Sales</h2><p>Receipts, cashier, payment method, discounts, COGS and profit.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'sales' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="stock"></div><div><h2>Current stock</h2><p>Available quantity, stock value, category and low-stock position.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'stock' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="purchases"></div><div><h2>Purchases</h2><p>Supplier, products, quantities, changing buying prices and totals.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'purchases' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="expenses"></div><div><h2>Expenses</h2><p>Expense categories, descriptions, dates and recorded amounts.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'expenses' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="debts"></div><div><h2>Customers &amp; debts</h2><p>Current credit sales, payments and outstanding customer balances.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'debts' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="debts"></div><div><h2>Debt payments</h2><p>Repayments, methods, references and void status in the selected period.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'debt_payments' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="reports"></div><div><h2>End-day closings</h2><p>Expected cash, counted cash, differences and cashier history.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'closings' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+  <section class="card data-tool-card"><div class="data-tool-icon" data-icon="products"></div><div><h2>Stocktakes</h2><p>Stocktake dates, status, variance lines and posting history.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'export_csv' 'stocktakes' %}?start={{ start }}&amp;end={{ end }}">Download CSV</a></section>
+</div>
+
+<div class="content-grid two-one section-gap data-backup-grid">
+  <section class="card data-bundle-card"><div><span class="data-eyebrow">EXPORT PACKAGE</span><h2>All CSV reports</h2><p>One ZIP containing Sales, Stock, Purchases, Expenses, Debts, Debt Payments, End-Day Closings and Stocktakes.</p></div><a class="btn btn-primary" data-no-loader="true" href="{% url 'export_all_zip' %}?start={{ start }}&amp;end={{ end }}">Download export ZIP</a></section>
+  <section class="card backup-card"><div><span class="data-eyebrow">FULL BACKUP</span><h2>Database + media</h2><p>Creates a consistent SQLite backup and includes uploaded branding/media files. Keep this file somewhere outside the POS computer.</p></div><a class="btn btn-secondary" data-no-loader="true" href="{% url 'backup_download' %}">Download backup ZIP</a></section>
+</div>
+
+<div class="backup-note section-gap"><strong>Backup habit</strong><span>Download a backup at the end of each business day and keep another copy on a different drive or secure storage.</span></div>
+{% endblock %}
