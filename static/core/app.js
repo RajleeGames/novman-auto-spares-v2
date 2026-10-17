@@ -543,9 +543,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   const css=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
   const palette={
     revenue:css('--brand','#0d765e'),
-    profit:'#63a793',
-    expense:'#b7d4cb',
-    debt:'#c8aa67',
+    profit:'#2f9b82',
+    expense:'#e0a15b',
+    debt:'#849bb6',
     line:css('--line','#e3e8e6'),
     text:css('--muted','#78827e'),
     surface:css('--surface','#fff')

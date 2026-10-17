@@ -49,38 +49,8 @@ def branch_switch(request):
 
 @admin_required
 def dashboard(request):
-    branch = current_branch(request)
-    today = timezone.localdate()
-    start = _date(request.GET.get('start'), today)
-    end = _date(request.GET.get('end'), today)
-    if start > end: start, end = end, start
-    sales = Sale.objects.filter(branch=branch, status='completed', sold_at__date__range=(start, end))
-    expenses = Expense.objects.filter(branch=branch, expense_date__range=(start, end))
-    batches = StockBatch.objects.filter(branch=branch, quantity_remaining_base__gt=0).select_related('product')
-    stock_value = sum((b.unit_cost_base*b.quantity_remaining_base for b in batches), ZERO)
-    quantities = {}
-    values = {}
-    for batch in batches:
-        quantities[batch.product_id] = quantities.get(batch.product_id, ZERO) + batch.quantity_remaining_base
-        values[batch.product_id] = values.get(batch.product_id, ZERO) + batch.quantity_remaining_base*batch.unit_cost_base
-    products = list(Product.objects.filter(is_active=True).select_related('category').order_by('name'))
-    low = [p for p in products if quantities.get(p.pk, ZERO) <= p.low_stock_level]
-    out = sum(quantities.get(p.pk, ZERO) <= 0 for p in products)
-    revenue = _money(sales, 'grand_total'); cost = _money(sales, 'cogs_total')
-    spent = _money(expenses, 'amount')
-    top_items = (SaleItem.objects.filter(sale__in=sales)
-        .values('product_id','product__name').annotate(qty=Sum('base_quantity'), amount=Sum('final_total'))
-        .order_by('-amount')[:8])
-    return render(request, 'novman_dashboard.html', {
-        'branch': branch, 'start': start, 'end': end,
-        'today': today, 'sales_count': sales.count(), 'revenue': revenue, 'cost': cost,
-        'gross': revenue - cost, 'expenses': spent, 'net': revenue-cost-spent,
-        'stock_value': stock_value, 'stock_qty': sum(quantities.values(), ZERO),
-        'active_products': len(products), 'low_count': len(low), 'out_count': out,
-        'top_items': top_items, 'recent_sales': sales.select_related('cashier')[:12],
-        'low_products': [(p, quantities.get(p.pk, ZERO)) for p in low[:10]],
-    })
-
+    from .novman_dashboard_v3 import dashboard_context
+    return render(request, 'novman_dashboard.html', dashboard_context(request))
 
 @login_required
 def pos(request):
