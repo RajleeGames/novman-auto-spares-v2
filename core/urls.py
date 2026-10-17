@@ -2,10 +2,12 @@ from django.urls import path
 
 from . import views
 from . import novman_views
+from . import novman_tools
 
 
 urlpatterns = [
     path('branch/switch/', novman_views.branch_switch, name='branch_switch'),
+    path('branches/', novman_tools.branch_manage, name='branch_manage'),
     path('stock-transfers/', novman_views.stock_transfers, name='stock_transfers'),
     path(
         'login/',
@@ -275,25 +277,25 @@ urlpatterns = [
     # ------------------------------------------------------------
     path(
         'data-tools/',
-        views.data_tools,
+        novman_tools.data_tools,
         name='data_tools',
     ),
 
     path(
         'data-tools/export/<str:kind>/',
-        novman_views.blocked_export,
+        novman_tools.export_csv,
         name='export_csv',
     ),
 
     path(
         'data-tools/export-all/',
-        novman_views.blocked_export,
+        novman_tools.export_all_zip,
         name='export_all_zip',
     ),
 
     path(
         'data-tools/backup/',
-        views.backup_download,
+        novman_tools.backup_download,
         name='backup_download',
     ),
 

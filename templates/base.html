@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{% block title %}{{ shop.name }}{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'core/app.css' %}?v=25">
+  <link rel="stylesheet" href="{% static 'core/app.css' %}?v=26">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="app-body {% block body_class %}{% endblock %}">
@@ -136,6 +136,7 @@
           <div class="nav-submenu">
             <div class="nav-submenu-inner">
               <a href="{% url 'users' %}" class="nav-subitem {% if 'user' in request.resolver_match.url_name %}active{% endif %}"><span class="nav-child-dot"></span><span>Users</span></a>
+              <a href="{% url 'branch_manage' %}" class="nav-subitem {% if request.resolver_match.url_name == 'branch_manage' %}active{% endif %}"><span class="nav-child-dot"></span><span>Branches</span></a>
               <a href="{% url 'data_tools' %}" class="nav-subitem {% if request.resolver_match.url_name == 'data_tools' or 'export_' in request.resolver_match.url_name or request.resolver_match.url_name == 'backup_download' %}active{% endif %}"><span class="nav-child-dot"></span><span>Data &amp; Backup</span></a>
               <a href="{% url 'settings' %}" class="nav-subitem {% if request.resolver_match.url_name == 'settings' %}active{% endif %}"><span class="nav-child-dot"></span><span>Settings</span></a>
             </div>
