@@ -82,7 +82,7 @@ def _json_request(url, *, method="GET", payload=None):
     headers = {
         "Accept": "application/json",
         "Authorization": _auth_header(),
-        "User-Agent": "Jane-Cosmetics-SMS/1.0",
+        "User-Agent": "Novman-Auto-Spares-SMS/2.0",
     }
     if payload is not None:
         data = json.dumps(payload).encode("utf-8")
@@ -134,7 +134,7 @@ def _find_balance(value):
 
 
 def get_beem_balance(force=False):
-    cache_key = "jane_sms_beem_balance"
+    cache_key = "novman_sms_beem_balance"
     if not force:
         cached = cache.get(cache_key)
         if cached:
@@ -282,7 +282,7 @@ def deliver_campaign(campaign):
     campaign.save(update_fields=[
         "status", "estimated_units", "provider_response", "completed_at", "updated_at",
     ])
-    cache.delete("jane_sms_beem_balance")
+    cache.delete("novman_sms_beem_balance")
     return campaign
 
 

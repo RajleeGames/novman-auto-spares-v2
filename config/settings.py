@@ -343,7 +343,7 @@ if DEBUG:
 
 BEEM_API_KEY = os.getenv("BEEM_API_KEY", "").strip()
 BEEM_SECRET_KEY = os.getenv("BEEM_SECRET_KEY", "").strip()
-BEEM_SENDER_ID = os.getenv("BEEM_SENDER_ID", "JANE").strip().upper()
+BEEM_SENDER_ID = os.getenv("BEEM_SENDER_ID", "NOVMAN").strip().upper()
 
 BEEM_SEND_URL = os.getenv(
     "BEEM_SEND_URL",

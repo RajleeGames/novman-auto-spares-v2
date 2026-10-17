@@ -12,7 +12,7 @@
   {% csrf_token %}
   <div class="sms-compose-main">
     <section class="card sms-compose-panel">
-      <div class="sms-step-head"><span class="sms-step-number">01</span><div><h2>Choose recipients</h2><p>Jane Cosmetics customers are loaded directly from the existing Customer table.</p></div><span class="sms-count-pill"><b data-sms-selected-count>0</b> selected</span></div>
+      <div class="sms-step-head"><span class="sms-step-number">01</span><div><h2>Choose recipients</h2><p>Novman Auto Spares customers are loaded from the existing POS customer list.</p></div><span class="sms-count-pill"><b data-sms-selected-count>0</b> selected</span></div>
       <div class="sms-audience-toolbar">
         <div class="sms-source-tabs"><button type="button" class="active" data-sms-source="customer">System customers</button><button type="button" data-sms-source="contact">SMS contacts</button></div>
         <div><button type="button" class="sms-mini-btn" data-sms-select-visible>Select visible</button><button type="button" class="sms-mini-btn" data-sms-clear-selection>Clear</button></div>
@@ -41,9 +41,9 @@
 
     <section class="card sms-compose-panel">
       <div class="sms-step-head"><span class="sms-step-number">02</span><div><h2>Write message</h2><p>Use a template or write a new customer message.</p></div></div>
-      <div class="sms-message-grid"><label>Campaign title<input class="form-control" name="title" placeholder="e.g. Weekend beauty offer"></label><label>Sender ID<select class="form-control" name="sender_id" required>{% for sender in sender_options %}<option value="{{ sender.value }}" {% if sender.default %}selected{% endif %}>{{ sender.label }}</option>{% endfor %}</select></label></div>
+      <div class="sms-message-grid"><label>Campaign title<input class="form-control" name="title" placeholder="e.g. New motorcycle spare-parts arrival"></label><label>Sender ID<select class="form-control" name="sender_id" required>{% for sender in sender_options %}<option value="{{ sender.value }}" {% if sender.default %}selected{% endif %}>{{ sender.label }}</option>{% endfor %}</select></label></div>
       <label class="sms-template-select">Template<select class="form-control" data-sms-template-select><option value="">Write a new message</option>{% for template in templates %}<option value="{{ template.pk }}" data-body="{{ template.body|escape }}" {% if initial_template and initial_template.pk == template.pk %}selected{% endif %}>{{ template.name }}{% if template.category %} · {{ template.category }}{% endif %}</option>{% endfor %}</select></label>
-      <div class="sms-editor-shell"><textarea class="sms-editor" name="message" maxlength="1000" required data-sms-message placeholder="Hello {first_name}, Jane Cosmetics has...">{% if initial_template %}{{ initial_template.body }}{% endif %}</textarea><div class="sms-editor-footer"><div class="sms-token-row"><button type="button" data-sms-token="{name}">{name}</button><button type="button" data-sms-token="{first_name}">{first_name}</button><button type="button" data-sms-token="{phone}">{phone}</button></div><div><b data-sms-char-count>0</b>/1000 · <b data-sms-segment-count>0</b> segment(s)</div></div></div>
+      <div class="sms-editor-shell"><textarea class="sms-editor" name="message" maxlength="1000" required data-sms-message placeholder="Hello {first_name}, NOVMAN AUTO SPARES has new motorcycle parts in stock...">{% if initial_template %}{{ initial_template.body }}{% endif %}</textarea><div class="sms-editor-footer"><div class="sms-token-row"><button type="button" data-sms-token="{name}">{name}</button><button type="button" data-sms-token="{first_name}">{first_name}</button><button type="button" data-sms-token="{phone}">{phone}</button></div><div><b data-sms-char-count>0</b>/1000 · <b data-sms-segment-count>0</b> segment(s)</div></div></div>
       <div class="sms-preview-box"><span>Preview</span><p data-sms-preview>Your message preview will appear here.</p></div>
     </section>
   </div>

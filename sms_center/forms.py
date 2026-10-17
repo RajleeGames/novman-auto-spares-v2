@@ -54,8 +54,8 @@ class SmsSenderProfileForm(forms.ModelForm):
         model = SmsSenderProfile
         fields = ["label", "sender_id", "is_default", "is_active"]
         widgets = {
-            "label": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. Main Jane sender"}),
-            "sender_id": forms.TextInput(attrs={"class": "form-control", "placeholder": "JANE", "maxlength": 11}),
+            "label": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. Novman SMS sender"}),
+            "sender_id": forms.TextInput(attrs={"class": "form-control", "placeholder": "NOVMAN", "maxlength": 11}),
             "is_default": forms.CheckboxInput(attrs={"class": "toggle-input"}),
             "is_active": forms.CheckboxInput(attrs={"class": "toggle-input"}),
         }

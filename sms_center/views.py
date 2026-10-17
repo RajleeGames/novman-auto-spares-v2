@@ -39,6 +39,12 @@ from .services import (
 
 
 def _sender_options():
+    """Prefer the configured/approved environment sender over stale Jane profiles.
+
+    This is a UI default only; Beem still needs to approve sender IDs.
+    Historical sender records are never rewritten.
+    """
+    preferred = (getattr(settings, "BEEM_SENDER_ID", "NOVMAN") or "NOVMAN").strip().upper()
     profiles = list(SmsSenderProfile.objects.filter(is_active=True))
     values = []
     seen = set()
@@ -48,19 +54,23 @@ def _sender_options():
             values.append({
                 "value": sender_id,
                 "label": profile.label or sender_id,
-                "default": profile.is_default,
+                "default": bool(profile.is_default),
             })
             seen.add(sender_id)
 
-    fallback = (getattr(settings, "BEEM_SENDER_ID", "JANE") or "JANE").strip().upper()
-    if fallback and fallback not in seen:
+    if preferred and preferred not in seen:
         values.append({
-            "value": fallback,
-            "label": f"{fallback} · Environment",
-            "default": not values,
+            "value": preferred,
+            "label": f"{preferred} · Environment",
+            "default": False,
         })
-    if values and not any(item["default"] for item in values):
-        values[0]["default"] = True
+    # Display the actual configured provider sender by default. A saved active
+    # sender profile can still be selected explicitly when Beem approves it.
+    selected = next((v for v in values if v["value"] == preferred), None)
+    if selected is None:
+        selected = next((v for v in values if v["default"]), values[0] if values else None)
+    for item in values:
+        item["default"] = item is selected
     return values
 
 
@@ -444,7 +454,7 @@ def import_contacts(request):
 @admin_required
 def sample_csv(request):
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="jane_sms_contacts_sample.csv"'
+    response["Content-Disposition"] = 'attachment; filename="novman_sms_contacts_sample.csv"'
     writer = csv.writer(response)
     writer.writerow(["name", "phone", "group"])
     writer.writerow(["Example Customer", "0712345678", "VIP Customers"])
